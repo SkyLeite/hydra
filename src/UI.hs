@@ -6,6 +6,7 @@ module UI (start) where
 import Control.Lens
 import Hydra
 import Monomer
+import System.Environment.Blank (unsetEnv)
 import System.Process as Process
 import UI.Msg
 import UI.Widgetable (Widgetable (toWidgetNode))
@@ -48,7 +49,8 @@ update _wenv _node model evt = case evt of
   ChangeActiveHydra task -> [Task $ HydraChanged <$> task]
 
 start :: Hydra -> IO ()
-start mainHydra =
+start mainHydra = do
+  unsetEnv "SDL_VIDEODRIVER" -- Wayland doesn't work, so we unset it just in case. Awful, I know
   startApp model update build config
   where
     config =
