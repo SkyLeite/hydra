@@ -1,5 +1,5 @@
 {
-  description = "srid/haskell-template: Nix template for Haskell projects";
+  description = "srid/hydra: Nix template for Haskell projects";
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
@@ -23,12 +23,13 @@
         # The "main" project. You can have multiple projects, but this template
         # has only one.
         haskellProjects.main = {
-          # packages.haskell-template.root = ./.;  # Auto-discovered by haskell-flake
+          # packages.hydra.root = ./.;  # Auto-discovered by haskell-flake
           overrides = self: super: { };
           devShell = {
-            tools = hp: {
-              treefmt = config.treefmt.build.wrapper;
-            } // config.treefmt.build.programs;
+            tools = hp:
+              {
+                treefmt = config.treefmt.build.wrapper;
+              } // config.treefmt.build.programs;
             hlsCheck.enable = true;
           };
         };
@@ -38,7 +39,8 @@
         treefmt.config = {
           inherit (config.flake-root) projectRootFile;
           package = pkgs.treefmt;
-          flakeFormatter = false; # For https://github.com/numtide/treefmt-nix/issues/55
+          flakeFormatter =
+            false; # For https://github.com/numtide/treefmt-nix/issues/55
 
           programs.ormolu.enable = true;
           programs.nixpkgs-fmt.enable = true;
@@ -48,10 +50,7 @@
           # We use fourmolu
           programs.ormolu.package = pkgs.haskellPackages.fourmolu;
           settings.formatter.ormolu = {
-            options = [
-              "--ghc-opt"
-              "-XImportQualifiedPost"
-            ];
+            options = [ "--ghc-opt" "-XImportQualifiedPost" ];
           };
         };
 
@@ -80,14 +79,14 @@
           run = {
             description = "Run the project with ghcid auto-recompile";
             exec = ''
-              ghcid -c "cabal repl exe:haskell-template" --warnings -T :main
+              ghcid -c "cabal repl exe:hydra" --warnings -T :main
             '';
             category = "Primary";
           };
         };
 
         # Default package.
-        packages.default = self'.packages.main-haskell-template;
+        packages.default = self'.packages.main-hydra;
 
         # Default shell.
         devShells.default =
